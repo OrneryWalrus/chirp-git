@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Chirp</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.0/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.0/angular-route.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.0/angular-resource.min.js"></script>
+    <script src="js/chirpApp.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body ng-app="chirpApp">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="#"> Chirp! </a>
+            <div class="collapse navbar-collapse">
+                <span class="navbar-text">Learn the MEAN stack by building this app</span>
+                <form class="float-right ml-auto">
+                    <div ng-hide="authenticated">
+                        <a href="#/login">Login</a> / <a href="#/signup">Signup</a>
+                    </div>
+                    <div ng-show="authenticated">
+                        Signed in as <a href="#/account">{{current_user}}</a> / <a href="#" ng-click="signout()">Logout</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </nav>
+    <div clas="container" ng-view>
+        <!-- angular view -->
+    </div>
+</body>
+
+</html>

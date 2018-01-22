@@ -1,0 +1,24 @@
+<div class="jumbotron text-center">
+    <h1>Chirp!</h1>
+    <p>
+        The non-biased place to voice yourself.
+    </p>
+</div>
+<div class="container mb-5" id="post-form">
+    <form ng-submit="post()" ng-show="authenticated">
+        <h4>{{current_user}} says</h4>
+        <!--<input class="form-control mb-1" required type="text" placeholder="Your name" ng-model="newPost.author" />-->
+        <textarea class="form-control mb-1" required maxlength="200" rows="3" placeholder="Say something" ng-model="newPost.text"></textarea>
+        <input class="btn btn-success float-right" type="submit" value="Chirp!" />
+    </form>
+</div>
+<div class="container mt-5" id="post-stream">
+    <h4>Chirp Feed</h4>
+    <div class="card text-white mb-1" ng-repeat="post in posts | orderBy:'time':true" ng-class-odd="'bg-info'" ng-class-even="'bg-warning'">
+        <div class="card-body">
+            <h5 class="card-title">{{post.text}}</h5>
+            <span class="card-text">Posted by @{{post.author}}</span>
+            <span class="card-text float-right ml-auto">Posted at {{post.time | date:"h:mma 'on' MMM d, y"}}</span>
+        </div>
+    </div>
+</div>
