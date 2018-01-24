@@ -5,92 +5,72 @@ var User = mongoose.model('User');
 var Post = mongoose.model('Post');
 
 module.exports = function(passport) {
-
-    // Passport needs to be able to serialize and deserialize users to support persistence
+    // serialize for persistence
     passport.serializeUser(function(user, done) {
-        console.log('serializing user:', user._id);
         return done(null, user._id);
     });
+    // deserialize for persistence
     passport.deserializeUser(function(id, done) {
         User.findById(id, function(err, user) {
-            /*
-            if (err) {
-                return done(err, false);
-            }
-            if (!user) {
-                return done('user not found', false);
-            }
-            // provide located user to passport
-            return done(user, true);
-            */
             return done(err, user);
         });
     });
+    // login strategy
     passport.use('login', new LocalStrategy({
-            passReqToCallback: true
+            passReqToCallback: true,
+            session: true
         },
         function(req, username, password, done) {
-
             User.findOne({ 'username': username }, function(err, user) {
-
-                // if err
+                var message = '';
                 if (err) {
-                    return done(err, false);
+                    return done(err);
                 }
-
-                // no user with this username
                 if (!user) {
-                    return done('user ' + username + ' not found!', false);
+                    message = 'login error - user not found';
+                    return done(null, false, { message: message });
                 }
-
-                // password incorrect
                 if (!isValidPassword(user, password)) {
-                    return done('incorrect password', false);
+                    message = 'login error - invalid password';
+                    return done(null, false, { message: message });
                 }
-
                 return done(null, user);
-
             });
-
         }
     ));
+    // signup strategy
     passport.use('signup', new LocalStrategy({
             passReqToCallback: true,
             session: true
         },
         function(req, username, password, done) {
             User.findOne({ 'username': username }, function(err, user) {
-
+                var message = '';
                 if (err) {
-                    return done(err, false);
+                    return done(err);
                 }
-
                 if (user) {
-                    // we have already signed this user up
-                    return done('username already taken', false);
+                    message = 'username already taken'; // we have already signed this user up
+                    return done(null, false, { message: message });
                 } else {
                     var newUser = new User()
-
                     newUser.username = username;
                     newUser.password = createHash(password);
-
                     newUser.save(function(err) {
                         if (err) {
                             throw err;
                         }
-                        console.log('successfully signed up user ' + newUser.username);
-
                         return done(null, newUser);
                     });
                 }
             });
         }
     ));
-
+    // check password hash
     var isValidPassword = function(user, password) {
         return bCrypt.compareSync(password, user.password);
     };
-
+    // create password hash
     var createHash = function(password) {
         return bCrypt.hashSync(password, bCrypt.genSaltSync(10), null);
     };

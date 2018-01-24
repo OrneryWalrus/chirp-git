@@ -2,16 +2,19 @@ var app = angular.module('chirpApp', ['ngRoute', 'ngResource']).run(function($ro
     $http.get('/api/checkauth').success(function(data) {
         if (data.state === 'success') {
             $rootScope.authenticated = true;
+            $rootScope.user = data.user;
             $rootScope.current_user = data.user.username;
         }
         if (data.state === 'failure') {
             $rootScope.authenticated = false;
+            $rootScope.user = null;
             $rootScope.current_user = '';
         }
     });
     $rootScope.signout = function() {
         $http.get('/auth/signout');
         $rootScope.authenticated = false;
+        $rootScope.user = null;
         $rootScope.current_user = '';
     };
 });
@@ -69,15 +72,17 @@ app.controller('mainController', function($rootScope, $scope, postFactory) {
 });
 
 app.controller('authController', function($scope, $rootScope, $http, $location) {
-    if (!$scope.user) {
+    if ($rootScope.authenticated === false) {
         $scope.user = {
             username: '',
             password: ''
         };
-    }
-    if (!$scope.errorMessage) {
         $scope.errorMessage = '';
+    } else {
+        $scope.errorMessage = 'Already authenticated as ' + $rootScope.current_user;
+        $location.path('/');
     }
+
     $scope.login = function() {
         $http.post('/auth/login', $scope.user).success(function(data) {
             if (data.state === 'success') {

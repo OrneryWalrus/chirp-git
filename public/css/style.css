@@ -1,6 +1,7 @@
 .full-login-container {
     width: 400px;
     height: 300px;
+    padding: 10px;
     position: absolute;
     left: 0;
     right: 0;
