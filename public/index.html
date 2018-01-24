@@ -19,10 +19,10 @@
                 <span class="navbar-text">Cat is nice cat. lvl 1 cat. i take, k.</span>
                 <form class="float-right ml-auto">
                     <div ng-hide="authenticated">
-                        I'm {{current_user}} <a href="#/login">Login</a> / <a href="#/signup">Signup</a>
+                        <a href="#/login">Login</a> / <a href="#/signup">Signup</a>
                     </div>
                     <div ng-show="authenticated">
-                        Signed in as <a href="#/account">{{current_user}}</a> / <a href="#" ng-click="signout()">Logout</a>
+                        <a href="#/account">{{current_user}}</a> / <a href="#" ng-click="signout()">Logout</a>
                     </div>
                 </form>
             </div>
