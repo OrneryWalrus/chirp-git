@@ -1,6 +1,14 @@
 var app = angular.module('chirpApp', ['ngRoute', 'ngResource']).run(function($rootScope, $http) {
-    $rootScope.authenticated = false;
-    $rootScope.current_user = '';
+    $http.get('/api/checkauth').success(function(data) {
+        if (data.state === 'success') {
+            $rootScope.authenticated = true;
+            $rootScope.current_user = data.user.username;
+        }
+        if (data.state === 'failure') {
+            $rootScope.authenticated = false;
+            $rootScope.current_user = '';
+        }
+    });
     $rootScope.signout = function() {
         $http.get('/auth/signout');
         $rootScope.authenticated = false;
@@ -61,25 +69,35 @@ app.controller('mainController', function($rootScope, $scope, postFactory) {
 });
 
 app.controller('authController', function($scope, $rootScope, $http, $location) {
-    $scope.user = {
-        username: '',
-        password: ''
-    };
-    $scope.errorMessage = '';
-
+    if (!$scope.user) {
+        $scope.user = {
+            username: '',
+            password: ''
+        };
+    }
+    if (!$scope.errorMessage) {
+        $scope.errorMessage = '';
+    }
     $scope.login = function() {
         $http.post('/auth/login', $scope.user).success(function(data) {
-            $rootScope.authenticated = true;
-            $rootScope.current_user = data.user.username;
-            $location.path('/');
+            if (data.state === 'success') {
+                $rootScope.authenticated = true;
+                $rootScope.current_user = data.user.username;
+                $location.path('/');
+            } else {
+                $scope.errorMessage = data.message;
+            }
         });
     };
-
     $scope.signup = function() {
         $http.post('/auth/signup', $scope.user).success(function(data) {
-            $rootScope.authenticated = true;
-            $rootScope.current_user = data.user.username;
-            $location.path('/');
+            if (data.state === 'success') {
+                $rootScope.authenticated = true;
+                $rootScope.current_user = data.user.username;
+                $location.path('/');
+            } else {
+                $scope.errorMessage = data.message;
+            }
         });
     };
 });

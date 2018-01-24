@@ -5,17 +5,37 @@ var Post = mongoose.model('Post');
 var User = mongoose.model('User');
 
 router.use(function(req, res, next) {
+    console.log('req.user: ' + req.user);
     if (req.method === "GET") {
         // continue to next middleware or request handler
+        console.log('GET request - continue without auth');
         return next();
     }
     if (req.isAuthenticated()) {
         // continue to next middleware or request handler
+        console.log('user is authenticated - continue');
         return next();
     }
     // user not authenticated - redirect to login page
+    console.log('user not authenticated and not GET request - redirect to login');
     res.redirect('/#login');
 });
+
+router.route('/checkauth')
+    .get(function(req, res) {
+        if (!req.user) {
+            return res.send({
+                state: 'failure',
+                user: null,
+                message: 'Invalid username or password.'
+            });
+        } else {
+            return res.send({
+                state: 'success',
+                user: req.user ? req.user : null
+            });
+        }
+    });
 
 router.route('/posts')
     // returns all posts    
